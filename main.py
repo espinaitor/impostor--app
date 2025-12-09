@@ -30,15 +30,16 @@ def get_base_html(content: str) -> str:
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>El Impostor</title>
+        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Exo+2:wght@400;600&display=swap" rel="stylesheet">
         <style>
             :root {{
-                --bg: #121212;
-                --card: #1e1e1e;
-                --text: #f0f0f0;
+                --bg: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+                --card: rgba(30, 30, 46, 0.85);
+                --text: #e0e0ff;
                 --impostor: #ff3b30;
                 --crew: #4cd964;
-                --button: #0a84ff;
-                --button-hover: #0077ed;
+                --button: #6a5acd;
+                --button-hover: #8a7bf0;
                 --reveal: #ff9500;
             }}
             * {{
@@ -47,8 +48,9 @@ def get_base_html(content: str) -> str:
                 padding: 0;
             }}
             body {{
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                font-family: 'Exo 2', sans-serif;
                 background: var(--bg);
+                background-attachment: fixed;
                 color: var(--text);
                 line-height: 1.6;
                 padding: 20px;
@@ -57,47 +59,51 @@ def get_base_html(content: str) -> str:
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-            }}
-            .container {{
-                width: 100%;
-                max-width: 500px;
                 text-align: center;
             }}
+            h1, h2 {{
+                font-family: 'Orbitron', monospace;
+                margin: 16px 0;
+                text-shadow: 0 0 10px rgba(100, 100, 255, 0.6);
+            }}
             h1 {{
-                font-size: 2.5rem;
-                margin-bottom: 24px;
+                font-size: 2.4rem;
                 color: var(--crew);
-                text-shadow: 0 0 10px rgba(76, 217, 100, 0.3);
             }}
             h2 {{
                 font-size: 1.8rem;
-                margin: 20px 0;
             }}
             textarea {{
                 width: 100%;
                 height: 160px;
                 padding: 16px;
                 font-size: 1.1rem;
-                border: 2px solid #333;
-                border-radius: 12px;
-                background: #2a2a2a;
-                color: var(--text);
+                border: 2px solid #5a5a8e;
+                border-radius: 14px;
+                background: rgba(20, 20, 35, 0.9);
+                color: #ffffff;
                 margin: 16px 0;
                 resize: vertical;
+                font-family: 'Exo 2', sans-serif;
             }}
             button {{
                 width: 100%;
                 padding: 16px;
                 font-size: 1.25rem;
                 font-weight: bold;
+                font-family: 'Orbitron', monospace;
                 border: none;
-                border-radius: 12px;
+                border-radius: 14px;
                 cursor: pointer;
                 margin: 12px 0;
-                transition: transform 0.1s, opacity 0.2s;
+                transition: all 0.2s ease;
+                letter-spacing: 1px;
+            }}
+            button:hover {{
+                opacity: 0.9;
             }}
             button:active {{
-                transform: scale(0.98);
+                transform: scale(0.97);
             }}
             .btn-primary {{
                 background: var(--button);
@@ -105,7 +111,7 @@ def get_base_html(content: str) -> str:
             }}
             .btn-reveal {{
                 background: var(--reveal);
-                color: white;
+                color: #000;
             }}
             .btn-impostor {{
                 background: var(--impostor);
@@ -114,30 +120,34 @@ def get_base_html(content: str) -> str:
             .card {{
                 background: var(--card);
                 padding: 24px;
-                border-radius: 16px;
+                border-radius: 20px;
                 margin: 20px 0;
-                box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(4px);
+                border: 1px solid rgba(100, 100, 255, 0.2);
             }}
             .player-name {{
-                font-size: 3.5rem;
-                font-weight: bold;
+                font-family: 'Orbitron', monospace;
+                font-size: 3.6rem;
+                font-weight: 700;
                 color: var(--impostor);
                 margin: 20px 0;
-                text-shadow: 0 0 15px rgba(255, 59, 48, 0.5);
+                text-shadow: 0 0 20px rgba(255, 59, 48, 0.7);
+                letter-spacing: -1px;
             }}
             #role {{
-                font-size: 1.6rem;
+                font-size: 1.5rem;
                 margin: 24px 0;
-                padding: 16px;
+                padding: 18px;
                 background: rgba(0,0,0,0.3);
-                border-radius: 12px;
+                border-radius: 14px;
                 display: none;
+                border-left: 4px solid var(--crew);
             }}
-            .hidden {{ display: none; }}
             footer {{
                 margin-top: 30px;
-                color: #666;
-                font-size: 0.9rem;
+                color: #aaa;
+                font-size: 0.85rem;
             }}
         </style>
     </head>
@@ -154,11 +164,11 @@ def home():
     global game_state
     game_state = None
     content = """
-    <h1>🎨 El Impostor</h1>
+    <h1>IMPOSTOR</h1>
     <div class="card">
         <p>Introduce los nombres de los participantes (uno por línea):</p>
         <form method="post" action="/setup">
-            <textarea name="players" placeholder="Aitor\nArtetxe\nMalaleche\n..."></textarea><br>
+            <textarea name="players" placeholder="Aitor\nJon\nMikel\n..."></textarea><br>
             <button type="submit" class="btn-primary">¡Empezar partida!</button>
         </form>
     </div>
@@ -227,7 +237,7 @@ def show_role():
     <div id="role">{secret_message}</div>
     <button id="reveal" class="btn-reveal" onclick="revealRole()">👁️ Desvelar rol</button>
     <form method="post" action="/next" style="display:none;" id="nextForm">
-        <button type="submit" class="btn-primary">✅ Rol visto\nSiguiente</button>
+        <button type="submit" class="btn-primary">✅ Rol visto</button>
     </form>
 
     <script>
