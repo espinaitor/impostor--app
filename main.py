@@ -1,26 +1,13 @@
 from fastapi import FastAPI, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 import secrets
+import palabras
 
 app = FastAPI(title="El Impostor", version="1.0.0")
 
 game_state = None
 
-WORDS_AND_CLUES = [
-    ("astronauta", "cohete"),
-    ("chef", "cuchillo"),
-    ("médico", "estetoscopio"),
-    ("policía", "pistola"),
-    ("profesor", "pizarra"),
-    ("bombero", "manguera"),
-    ("cantante", "micrófono"),
-    ("pintor", "pincel"),
-    ("detective", "lupa"),
-    ("granjero", "tractor"),
-    ("ninja", "shuriken"),
-    ("pirata", "brújula"),
-    ("espía", "disfraz"),
-]
+WORDS_AND_CLUES = palabras.WORDS_AND_CLUES
 
 def get_base_html(content: str) -> str:
     return f"""
