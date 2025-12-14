@@ -129,6 +129,11 @@ def get_base_html(content: str) -> str:
                 background: rgba(0,0,0,0.3);
                 border-radius: 14px;
                 display: none;
+            }}
+            #role.impostor {{
+                border-left: 4px solid var(--impostor);
+            }}
+            #role.crew {{
                 border-left: 4px solid var(--crew);
             }}
             footer {{
@@ -149,7 +154,7 @@ def get_base_html(content: str) -> str:
 @app.get("/", response_class=HTMLResponse)
 def home():
     global game_state
-    game_state = None
+    game_state = None  # Solo al volver al inicio manualmente
     content = """
     <h1>IMPOSTOR</h1>
     <div class="card">
@@ -219,9 +224,10 @@ def show_role():
         f"Tu palabra secreta es: <strong>{game_state['word']}</strong>"
     )
 
+    role_class = "impostor" if is_impostor else "crew"
     content = f"""
     <div class="player-name">{current_player}</div>
-    <div id="role">{secret_message}</div>
+    <div id="role" class="{role_class}">{secret_message}</div>
     <button id="reveal" class="btn-reveal" onclick="revealRole()">👁️ Desvelar rol</button>
     <form method="post" action="/next" style="display:none;" id="nextForm">
         <button type="submit" class="btn-primary">✅ Rol visto</button>
@@ -244,17 +250,42 @@ def next_player():
         game_state["current_index"] += 1
     return RedirectResponse(url="/show_role", status_code=303)
 
+@app.post("/new_round")
+def new_round():
+    global game_state
+    if not game_state or "players" not in game_state:
+        return RedirectResponse("/", status_code=303)
+
+    player_list = game_state["players"]
+    word, clue = secrets.choice(WORDS_AND_CLUES)
+    impostor = secrets.choice(player_list)
+
+    game_state = {
+        "players": player_list,
+        "word": word,
+        "clue": clue,
+        "impostor": impostor,
+        "current_index": 0,
+        "total": len(player_list),
+    }
+    return RedirectResponse(url="/show_role", status_code=303)
+
 @app.post("/reveal_impostor")
 def reveal_impostor():
     global game_state
     impostor = game_state["impostor"] if game_state else "Desconocido"
+    players = game_state["players"] if game_state else None
+
     content = f"""
     <h1>🚨 ¡El impostor era...</h1>
     <div class="card">
         <h2 style="color: var(--impostor); font-size: 2.5rem;">{impostor}!</h2>
         <p style="margin-top: 20px;">Gracias por jugar.</p>
-        <a href="/" style="display: block; margin-top: 20px; text-decoration: none;">
-            <button class="btn-primary">↺ Nueva partida</button>
+        <form method="post" action="/new_round" style="margin-top: 20px;">
+            <button type="submit" class="btn-primary">🔄 Otra ronda con los mismos jugadores</button>
+        </form>
+        <a href="/" style="display: block; margin-top: 12px; text-decoration: none;">
+            <button class="btn-primary" style="background: #555;">🏠 Nueva partida (nuevos jugadores)</button>
         </a>
     </div>
     """
